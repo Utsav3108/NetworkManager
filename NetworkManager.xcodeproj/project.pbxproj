@@ -7,13 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6F23190F2F177F0F0068FC44 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F23190E2F177F0F0068FC44 /* Network.swift */; };
 		6F2319122F178BF30068FC44 /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 6F2319112F178BF30068FC44 /* SwiftyJSON */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		6F2318F32F177EED0068FC44 /* NetworkManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetworkManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		6F23190E2F177F0F0068FC44 /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -52,7 +50,6 @@
 		6F2318EA2F177EED0068FC44 = {
 			isa = PBXGroup;
 			children = (
-				6F23190E2F177F0F0068FC44 /* Network.swift */,
 				6F2318F52F177EED0068FC44 /* NetworkManager */,
 				6F2318F42F177EED0068FC44 /* Products */,
 			);
@@ -144,7 +141,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6F23190F2F177F0F0068FC44 /* Network.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -28,12 +28,11 @@ import SwiftyJSON
  - Response Validation
  5. Telemetry & Debugging
  - Logging
- - Metrics Tracking
  - Request Cancellation
  */
 
 
-let basePath = "http://localhost:8000/"
+let basePath = "http://localhost:8001/"
 
 enum Method: String {
     case GET
@@ -59,9 +58,20 @@ struct Request {
 
 struct Network {
     
-    let urlSession : URLSession = URLSession(configuration: URLSessionConfiguration.default)
+    static let shared = Network()
     
-    func perform(_ request : Request) async {
+    let urlSession : URLSession
+    
+    init(urlConfig: URLSessionConfiguration = .default) {
+        self.urlSession = URLSession(configuration: urlConfig)
+    }
+    
+    func perform(_ request : Request) async -> Data? {
+        
+        guard !Task.isCancelled else {
+            print("cancelled run")
+            return nil
+        }
         
         var req = URLRequest(url: request.url)
         
@@ -73,27 +83,44 @@ struct Network {
         
         req.allHTTPHeaderFields = ["Content-Type": "application/json"]
                 
+        let startTime = Date.now
+        
+        var result : Data?
+        var errorMessage : String?
+        
         do {
             
-            let startTime = Date.now
+            result = try await urlSession.data(for: req).0
             
-            let result = try await urlSession.data(for: req)
             
-            let endTime = Date.now
-            
-            log(request: req, response: result.0, timeTaken: endTime.timeIntervalSince(startTime))
-            
-        } catch {
-            print("Error: ", error.localizedDescription)
+        } catch let error as CancellationError {
+            print("❌ Request was explicitly cancelled.")
+            errorMessage = error.localizedDescription
+        } catch let error as URLError where error.code == .cancelled {
+            print("❌ Network request cancelled by URLSession.")
+            errorMessage = error.localizedDescription
+        } catch let error {
+            errorMessage = error.localizedDescription
+
         }
+        
+        log(
+            request: req,
+            response: result ?? Data(),
+            error: errorMessage,
+            timeTaken: Date.now.timeIntervalSince(startTime)
+        )
+        
+        return nil
     
     }
     
-    private func log(request : URLRequest, response : Data, timeTaken : TimeInterval) {
+    private func log(request : URLRequest, response : Data, error: String? = nil, timeTaken : TimeInterval) {
         
         print("<======>")
         request.printRequest()
         print("Response: ", JSON(response))
+        print("Error: ", error ?? "None")
         print("🕥 Time taken: ", timeTaken, "s")
         print("<======>")
         
@@ -108,6 +135,7 @@ extension URLRequest {
         print("URL: ", url?.absoluteString ?? "-")
         print("Method: ", httpMethod ?? "-")
         print("Body:", JSON(httpBody ?? Data()))
+        print("HTTP Headers: ", allHTTPHeaderFields ?? [:])
         
     }
 }

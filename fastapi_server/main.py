@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
 import json
+import asyncio
 
 DATA_FILE = Path(__file__).parent / "data.json"
 
@@ -13,6 +14,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def add_delay_middleware(request, call_next):
+    """Delay every incoming request by 5 seconds (useful for testing)."""
+    await asyncio.sleep(5)
+    response = await call_next(request)
+    return response
 
 
 def load_data():
