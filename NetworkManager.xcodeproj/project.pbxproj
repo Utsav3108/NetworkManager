@@ -6,8 +6,14 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		6F23190F2F177F0F0068FC44 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F23190E2F177F0F0068FC44 /* Network.swift */; };
+		6F2319122F178BF30068FC44 /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 6F2319112F178BF30068FC44 /* SwiftyJSON */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		6F2318F32F177EED0068FC44 /* NetworkManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetworkManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6F23190E2F177F0F0068FC44 /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -36,6 +42,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6F2319122F178BF30068FC44 /* SwiftyJSON in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -45,6 +52,7 @@
 		6F2318EA2F177EED0068FC44 = {
 			isa = PBXGroup;
 			children = (
+				6F23190E2F177F0F0068FC44 /* Network.swift */,
 				6F2318F52F177EED0068FC44 /* NetworkManager */,
 				6F2318F42F177EED0068FC44 /* Products */,
 			);
@@ -78,6 +86,7 @@
 			);
 			name = NetworkManager;
 			packageProductDependencies = (
+				6F2319112F178BF30068FC44 /* SwiftyJSON */,
 			);
 			productName = NetworkManager;
 			productReference = 6F2318F32F177EED0068FC44 /* NetworkManager.app */;
@@ -107,6 +116,9 @@
 			);
 			mainGroup = 6F2318EA2F177EED0068FC44;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				6F2319102F178BF30068FC44 /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6F2318F42F177EED0068FC44 /* Products */;
 			projectDirPath = "";
@@ -132,6 +144,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6F23190F2F177F0F0068FC44 /* Network.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -341,6 +354,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		6F2319102F178BF30068FC44 /* XCRemoteSwiftPackageReference "SwiftyJSON" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwiftyJSON/SwiftyJSON";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		6F2319112F178BF30068FC44 /* SwiftyJSON */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6F2319102F178BF30068FC44 /* XCRemoteSwiftPackageReference "SwiftyJSON" */;
+			productName = SwiftyJSON;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 6F2318EB2F177EED0068FC44 /* Project object */;
 }
