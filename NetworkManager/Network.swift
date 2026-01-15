@@ -13,7 +13,7 @@ import SwiftyJSON
 - Request Cancellation
 */
 
-let basePath = "http://localhost:8001/"
+let basePath = "http://localhost:8000/"
 
 enum Method: String {
     case GET
