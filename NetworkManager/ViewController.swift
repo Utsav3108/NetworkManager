@@ -15,8 +15,8 @@ class ViewController: UIViewController {
     // MARK: - Global Variable
     var network : Network = Network()
     
-    var task1: Task<Data?, Error>?
-    var task2: Task<Data?, Error>?
+    var task1: Task<[Weather]?, Error>?
+    var task2: Task<Weather?, Error>?
     
     // MARK: - Life Cycle Methods
     override func viewDidLoad() {
@@ -25,7 +25,7 @@ class ViewController: UIViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        task1?.cancel()
+        //task1?.cancel()
     }
     
     // MARK: - IB Action
@@ -42,8 +42,8 @@ class ViewController: UIViewController {
             
             let request = Request(url: url, httpMethod: .GET, body: nil)
             
-            let result = await network.perform(request)
-            
+            let result : [Weather]? = await network.perform(request)
+            print("Result: ", result ?? [])
             return result
             
         }
@@ -53,7 +53,9 @@ class ViewController: UIViewController {
             
             let request = Request(url: url, httpMethod: .GET, body: nil)
             
-            let result = await network.perform(request)
+            let result : Weather? = await network.perform(request)
+            
+            print("Result : ", result as Any)
             
             return result
         }

@@ -39,15 +39,39 @@ struct Request {
 
 struct Network {
     
+    
+    private struct Transaction {
+        
+        var request : URLRequest
+        var response : Data
+        var error : String?
+        var timeTaken : TimeInterval
+        
+        func log() {
+            
+            print("<======>")
+            request.printRequest()
+            print("Response: ", JSON(response))
+            print("Error: ", error ?? "None")
+            print("🕥 Time taken: ", timeTaken, "s")
+            print("<======>")
+            
+        }
+        
+    }
+    
     static let shared = Network()
     
     let urlSession : URLSession
     
+    let decoder = JSONDecoder()
+    
     init(urlConfig: URLSessionConfiguration = .default) {
         self.urlSession = URLSession(configuration: urlConfig)
+        decoder.dateDecodingStrategy = .iso8601
     }
     
-    func perform(_ request : Request) async -> Data? {
+    func perform<T:Decodable>(_ request : Request) async -> T? {
         
         guard !Task.isCancelled else {
             print("cancelled run")
@@ -66,13 +90,17 @@ struct Network {
                 
         let startTime = Date.now
         
-        var result : Data?
+        var response : Data?
         var errorMessage : String?
+        
+        var result: T?
         
         do {
             
-            result = try await urlSession.data(for: req).0
+            response = try await urlSession.data(for: req).0
             
+            result = try? decoder.decode(T.self, from: response!)
+
             
         } catch let error as CancellationError {
             print("❌ Request was explicitly cancelled.")
@@ -85,27 +113,20 @@ struct Network {
 
         }
         
-        log(
+        let transaction = Transaction(
             request: req,
-            response: result ?? Data(),
+            response: response ?? Data(),
             error: errorMessage,
             timeTaken: Date.now.timeIntervalSince(startTime)
         )
         
-        return nil
+        transaction.log()
+        
+        return result
     
     }
     
-    private func log(request : URLRequest, response : Data, error: String? = nil, timeTaken : TimeInterval) {
-        
-        print("<======>")
-        request.printRequest()
-        print("Response: ", JSON(response))
-        print("Error: ", error ?? "None")
-        print("🕥 Time taken: ", timeTaken, "s")
-        print("<======>")
-        
-    }
+
     
 }
 
