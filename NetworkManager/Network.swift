@@ -15,6 +15,25 @@ import SwiftyJSON
 
 let basePath = "http://localhost:8000/"
 
+// MARK: - Errors
+enum NetworkError: Error, LocalizedError {
+    case invalidResponse
+    case unauthorized // 401
+    case serverError(Int) // 500 range
+    case decodingFailed
+    case unknown(Error)
+
+    var errorDescription: String? {
+        switch self {
+        case .unauthorized: return "Your session expired. Please log in again."
+        case .serverError(let code): return "Server is having trouble (Code: \(code))"
+        case .decodingFailed: return "We received data, but couldn't read it."
+        default: return "Something went wrong. Please try again."
+        }
+    }
+}
+
+// MARK: - Request / Methods
 enum Method: String {
     case GET
     case PUT
@@ -36,7 +55,7 @@ struct Request {
     }
 }
 
-
+// MARK: - Network Engine
 struct Network {
     
     
@@ -87,6 +106,7 @@ struct Network {
         }
         
         req.allHTTPHeaderFields = ["Content-Type": "application/json"]
+        req.allHTTPHeaderFields = ["Authorization": "Bearer mysecrettoken123"]
                 
         let startTime = Date.now
         
@@ -97,7 +117,11 @@ struct Network {
         
         do {
             
-            response = try await urlSession.data(for: req).0
+            let apiResponse = try await urlSession.data(for: req)
+            
+            try validate(apiResponse.1)
+            
+            response = apiResponse.0
             
             result = try? decoder.decode(T.self, from: response!)
 
@@ -108,7 +132,23 @@ struct Network {
         } catch let error as URLError where error.code == .cancelled {
             print("❌ Network request cancelled by URLSession.")
             errorMessage = error.localizedDescription
+        } catch let error as NetworkError {
+            
+            switch error {
+            case .unauthorized:
+                break
+            default:
+                break
+            }
+            
+            print("Error: ", error.errorDescription ?? "-")
+            errorMessage = error.localizedDescription
+        } catch let error as URLError where error.code == .cannotConnectToHost {
+            print("ella")
+            errorMessage = error.localizedDescription
+
         } catch let error {
+            
             errorMessage = error.localizedDescription
 
         }
@@ -124,6 +164,24 @@ struct Network {
         
         return result
     
+    }
+    
+    private func validate(_ response: URLResponse) throws {
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw NetworkError.invalidResponse
+        }
+    
+        print("Http StatusCode :", httpResponse.statusCode)
+        switch httpResponse.statusCode {
+        case 200...299:
+            return // All good
+        case 401, 404:
+            throw NetworkError.unauthorized
+        case 500...599:
+            throw NetworkError.serverError(httpResponse.statusCode)
+        default:
+            throw NetworkError.unknown(URLError(.badServerResponse))
+        }
     }
     
 

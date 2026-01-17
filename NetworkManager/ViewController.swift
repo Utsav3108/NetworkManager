@@ -38,7 +38,7 @@ class ViewController: UIViewController {
         
         task1 = Task {
             
-            let url = URL(string: basePath + "cities")!
+            let url = URL(string: basePath + "secure-cities")!
             
             let request = Request(url: url, httpMethod: .GET, body: nil)
             
